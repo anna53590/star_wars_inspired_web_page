@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the developer awakens | my cs journey</title>
+
+  <!-- Alternative font used automatically until star-jedi.ttf is in the same folder. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Get Star Jedi from https://www.fontspace.com/star-jedi-font-f9641
+       and place its .ttf file alongside this HTML, named star-jedi.ttf. */
+    @font-face {
+      font-family: "Star Jedi";
+      src: url("./star-jedi.ttf") format("truetype");
+      font-display: swap;
+    }
+    * { box-sizing: border-box; }
+    body {
+      --background: #080c18;
+      --card: #111a2a;
+      --text: #f4f6fc;
+      --muted: #a5afc2;
+      --border: #29364c;
+      --input: #0b1220;
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Inter", Arial, sans-serif;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(1px 1px at 16% 21%, #ffffff9c 99%, transparent),
+        radial-gradient(1px 1px at 74% 40%, #ffffff85 99%, transparent),
+        radial-gradient(2px 2px at 46% 78%, #ffffff70 99%, transparent),
+        radial-gradient(circle at 50% 0%, #1b2c4d 0%, transparent 46%);
+      background-size: 300px 300px, 420px 420px, 520px 520px, 100% 100%;
+      transition: background-color .45s ease, color .45s ease;
+    }
+    body.light-side {
+      --background: #edf2fa;
+      --card: #ffffff;
+      --text: #15213a;
+      --muted: #52617a;
+      --border: #d6deeb;
+      --input: #f3f6fc;
+      background-image: radial-gradient(circle at 50% 0%, #dce7ff 0%, transparent 55%);
+    }
+    .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 52px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .brand { color: #f4d66f; font: 700 14px "Orbitron", sans-serif; letter-spacing: 2px; }
+    .episode { color: var(--muted); font-size: 12px; letter-spacing: 2px; text-align: right; }
+
+    /* Main title deliberately lowercase for the Star Jedi font. */
+    .hero { text-align: center; padding: 67px 10px 54px; }
+    .eyebrow { color: #f4d66f; font: 700 11px "Orbitron", sans-serif; letter-spacing: 4px; }
+    h1 {
+      margin: 20px 0 17px;
+      color: #f8d96a;
+      font: 400 clamp(36px, 6.8vw, 70px)/1.25 "Star Jedi", "Orbitron", sans-serif;
+      text-transform: lowercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 24px #eabf3933;
+      animation: title-glow 3.5s ease-in-out infinite alternate;
+    }
+    @keyframes title-glow {
+      from { text-shadow: 0 0 8px #f3d46a22, 0 0 25px #eabf3922; }
+      to { text-shadow: 0 0 14px #f3d46a75, 0 0 40px #eabf3950; }
+    }
+    /* Animated entrance for existing hero content. */
+    .hero .eyebrow { animation: reveal-up .65s ease both; }
+    .hero h1 { animation: reveal-up .85s .12s ease both, title-glow 3.5s .95s ease-in-out infinite alternate; }
+    .hero .subtitle { animation: reveal-up .85s .27s ease both; }
+    .hero .hero-tags { animation: reveal-up .85s .42s ease both; }
+    @keyframes reveal-up {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .subtitle { max-width: 590px; margin: auto; color: var(--muted); font-size: 16px; line-height: 1.7; }
+    .hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 25px; }
+    .hero-tags span {
+      border: 1px solid var(--border); border-radius: 20px; padding: 8px 12px;
+      font-size: 12px; color: var(--muted);
+      transition: transform .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
+    }
+    .hero-tags span:hover { transform: translateY(-5px); background: #f5d56a17; color: #e4bd55; box-shadow: 0 7px 20px #f5d56a18; }
+
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .card {
+      position: relative;
+      background: var(--card); border: 1px solid var(--border); border-radius: 17px;
+      padding: 25px; box-shadow: 0 12px 30px #00000016;
+      transition: background .35s ease, border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+    }
+    /* Add this class only with jQuery, so the page stays visible if JS is disabled. */
+    .card.entering { opacity: 0; transform: translateY(25px); }
+    .card.entering.visible { opacity: 1; transform: translateY(0); transition: opacity .6s ease, transform .6s ease, border-color .3s ease, box-shadow .3s ease; }
+    .card:hover { transform: translateY(-6px); border-color: #e5bd58a3; box-shadow: 0 17px 36px #00000032, 0 0 22px #e5bd5814; }
+    .card.entering.visible:hover { transform: translateY(-6px); }
+    .card-wide { grid-column: 1 / -1; }
+    .card-label { color: #e4bd55; font: 700 11px "Orbitron", sans-serif; letter-spacing: 2px; }
+    h2 { margin: 12px 0 8px; font-size: 21px; letter-spacing: -.4px; text-transform: lowercase; }
+    .description { margin: 0 0 22px; font-size: 13px; color: var(--muted); line-height: 1.65; }
+    select, input[type="text"] {
+      width: 100%; min-width: 0; padding: 13px 14px; border-radius: 9px;
+      border: 1px solid var(--border); color: var(--text);
+      background: var(--input); font: inherit; font-size: 13px;
+      transition: background .3s, border-color .2s, box-shadow .2s;
+    }
+    select:hover, input[type="text"]:hover { border-color: #d3af60; }
+    button {
+      cursor: pointer; border: 0; border-radius: 9px; padding: 12px 18px;
+      font: 700 12px "Orbitron", sans-serif;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+    button:hover:not(:disabled) { transform: translateY(-3px) scale(1.03); filter: brightness(1.08); box-shadow: 0 8px 18px #e0b85726; }
+    button:active:not(:disabled) { transform: scale(.97); }
+    button:disabled { opacity: .75; cursor: default; }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #ffdc69; outline-offset: 3px; }
+    .primary { color: #101522; background: #f5d56a; }
+    .secondary { color: var(--text); background: var(--input); border: 1px solid var(--border); }
+    .result { background: var(--input); padding: 15px; border: 1px solid var(--border); border-radius: 10px; margin-top: 14px; transition: background .35s ease; }
+    .result strong { display: block; margin-bottom: 6px; font-size: 14px; }
+    .result p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .xp-row { display: flex; justify-content: space-between; margin: 25px 0 11px; gap: 10px; }
+    .xp-row strong { font: 700 17px "Orbitron", sans-serif; color: #f5d56a; }
+    .xp-row small { color: var(--muted); align-self: center; }
+    .progress { height: 12px; background: var(--input); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .progress-fill { width: 20%; height: 100%; border-radius: 20px; background: linear-gradient(90deg, #eabf4a, #fff0a4); }
+    #xpMessage { color: var(--muted); font-size: 12px; min-height: 18px; margin: 12px 0 19px; }
+    .mission-entry { display: flex; gap: 8px; }
+    .mission-entry button { white-space: nowrap; }
+    .mission-list { list-style: none; padding: 0; margin: 16px 0 0; }
+    .mission-list li {
+      display: flex; gap: 10px; align-items: center; padding: 11px 6px;
+      border-bottom: 1px solid var(--border); border-radius: 6px;
+      transition: background .22s ease, transform .22s ease;
+    }
+    .mission-list li:hover { background: #bca04d18; transform: translateX(5px); }
+    .mission-list input { accent-color: #f5d56a; width: 16px; height: 16px; cursor: pointer; }
+    .mission-text { font-size: 13px; flex: 1; line-height: 1.4; overflow-wrap: anywhere; }
+    .done .mission-text { text-decoration: line-through; opacity: .5; }
+    .remove-mission { padding: 3px 6px; color: var(--muted); background: transparent; border: 0; font: 600 18px Arial, sans-serif; }
+    .mission-count { color: var(--muted); font-size: 12px; margin-top: 15px; }
+    .quote { min-height: 78px; display: flex; align-items: center; font-size: 19px; font-weight: 700; line-height: 1.5; margin: 10px 0 18px; }
+    .theme-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .theme-row .description { margin-bottom: 0; }
+    footer { text-align: center; margin-top: 36px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    footer a { color: #b89230; }
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      .card-wide { grid-column: auto; }
+      .hero { padding: 52px 0 42px; }
+      .card { padding: 21px; }
+      .theme-row { display: block; }
+      .theme-row button { margin-top: 18px; }
+    }
+    @media (max-width: 360px) { .mission-entry { flex-direction: column; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+      .card.entering { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">cs // a new hope</div>
+      <div class="episode">episode i · personal growth</div>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow">a galaxy of possibilities</div>
+      <h1>the developer awakens</h1>
+      <p class="subtitle">I am a computer science student learning to turn curiosity into code. My mission: keep growing, build useful things, and become a great developer.</p>
+      <div class="hero-tags">
+        <span>★ learn every day</span>
+        <span>★ build real projects</span>
+        <span>★ never give up</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- jQuery feature 1: career path selector -->
+      <section class="card">
+        <div class="card-label">01 / career</div>
+        <h2>choose your path</h2>
+        <p class="description">The tech galaxy is big. Select a career direction to see my next goal.</p>
+        <label for="careerPath" class="description">My future career:</label>
+        <select id="careerPath">
+          <option value="software">Software Developer</option>
+          <option value="web">Web Developer</option>
+          <option value="security">Cybersecurity Specialist</option>
+          <option value="ai">AI Engineer</option>
+        </select>
+        <div class="result" aria-live="polite">
+          <strong id="careerTitle">Software Developer</strong>
+          <p id="careerGoal">My goal: improve my programming skills and create useful applications.</p>
+        </div>
+      </section>
+
+      <!-- jQuery feature 2: XP progress bar -->
+      <section class="card">
+        <div class="card-label">02 / discipline</div>
+        <h2>build your skills</h2>
+        <p class="description">Progress comes from small, consistent actions. Every study session counts.</p>
+        <div class="xp-row"><strong id="xpAmount">20 / 100 XP</strong><small>Training progress</small></div>
+        <div class="progress" id="xpProgress" role="progressbar" aria-label="Training progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20">
+          <div class="progress-fill" id="xpFill"></div>
+        </div>
+        <p id="xpMessage" aria-live="polite">A strong start. Keep learning!</p>
+        <button class="primary" id="studyButton">+ 20 XP · study session</button>
+      </section>
+
+      <!-- jQuery feature 3: dynamic mission list -->
+      <section class="card">
+        <div class="card-label">03 / goals</div>
+        <h2>daily missions</h2>
+        <p class="description">Break big dreams into small tasks. Add a mission and check it off when finished.</p>
+        <div class="mission-entry">
+          <input type="text" id="missionInput" placeholder="e.g. Practice JavaScript" maxlength="90" aria-label="New mission">
+          <button class="primary" id="addMission">add</button>
+        </div>
+        <ul id="missionList" class="mission-list">
+          <li><input class="mission-check" type="checkbox" aria-label="Finish one coding exercise"><span class="mission-text">Finish one coding exercise</span><button class="remove-mission" aria-label="Remove mission">×</button></li>
+          <li><input class="mission-check" type="checkbox" aria-label="Read about a new technology"><span class="mission-text">Read about a new technology</span><button class="remove-mission" aria-label="Remove mission">×</button></li>
+        </ul>
+        <p class="mission-count" id="missionCount" aria-live="polite">0 of 2 missions completed</p>
+      </section>
+
+      <!-- jQuery feature 4: changing motivational quotes -->
+      <section class="card">
+        <div class="card-label">04 / motivation</div>
+        <h2>words for the journey</h2>
+        <p class="description">When a bug feels impossible, remember why you started.</p>
+        <div class="quote" id="quoteText" aria-live="polite">“Every expert developer was once a beginner who kept trying.”</div>
+        <button class="secondary" id="quoteButton">new inspiration ↻</button>
+      </section>
+
+      <!-- jQuery feature 5: change the page theme -->
+      <section class="card card-wide">
+        <div class="theme-row">
+          <div>
+            <div class="card-label">05 / mindset</div>
+            <h2>choose your side</h2>
+            <p class="description" id="themeText">Dark mode is active. Stay focused, stay curious, and trust your progress.</p>
+          </div>
+          <button class="primary" id="themeButton">switch to light side</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Made by a computer science student, powered by HTML, CSS and jQuery.<br>
+      Heading font: <a href="https://www.fontspace.com/star-jedi-font-f9641" target="_blank" rel="noopener noreferrer">Star Jedi by Boba Fonts on FontSpace</a> (with Orbitron fallback).
+    </footer>
+  </div>
+
+  <!-- Internet connection needed for jQuery and fallback Google fonts. -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    $(function () {
+      // Animation: reveal the existing cards in sequence using jQuery and CSS.
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const $cards = $(".card").addClass("entering");
+        $cards.each(function (index) {
+          const $card = $(this);
+          $card.delay(index * 130).queue(function (next) {
+            $card.addClass("visible");
+            next();
+          });
+        });
+      }
+
+      // 1. Fade out / fade in the goal when a career is selected.
+      const careers = {
+        software: ["Software Developer", "My goal: improve my programming skills and create useful applications."],
+        web: ["Web Developer", "My goal: master HTML, CSS and JavaScript, then build websites people enjoy."],
+        security: ["Cybersecurity Specialist", "My goal: learn how systems work and help protect them from threats."],
+        ai: ["AI Engineer", "My goal: study Python, mathematics and machine learning to solve real problems."]
+      };
+      $("#careerPath").on("change", function () {
+        const selected = careers[$(this).val()];
+        $(".result").stop(true, true).fadeOut(160, function () {
+          $("#careerTitle").text(selected[0]);
+          $("#careerGoal").text(selected[1]);
+          $(this).fadeIn(240);
+        });
+      });
+
+      // 2. Increase XP and animate the progress bar + feedback.
+      let xp = 20;
+      $("#studyButton").on("click", function () {
+        xp = Math.min(xp + 20, 100);
+        $("#xpAmount").text(xp + " / 100 XP");
+        $("#xpFill").stop().animate({ width: xp + "%" }, 400);
+        $("#xpProgress").attr("aria-valuenow", xp);
+        const message = xp === 100
+          ? "Mission complete! Your hard work is paying off."
+          : "Great work! Consistency builds confidence.";
+        $("#xpMessage").stop(true, true).fadeOut(130, function () {
+          $(this).text(message).fadeIn(200);
+        });
+        if (xp === 100) $(this).prop("disabled", true).text("training complete ✓");
+      });
+
+      // 3. Fade new missions in, completed missions into place, removed missions out.
+      function updateMissionCount() {
+        const total = $("#missionList li").length;
+        const completed = $("#missionList .mission-check:checked").length;
+        $("#missionCount").text(completed + " of " + total + " missions completed");
+      }
+      function addMission() {
+        const mission = $("#missionInput").val().trim();
+        if (!mission) return;
+        const $item = $('<li><input type="checkbox" class="mission-check"><span class="mission-text"></span><button class="remove-mission" aria-label="Remove mission">×</button></li>');
+        $item.find(".mission-text").text(mission); // text() prevents HTML injection
+        $item.find(".mission-check").attr("aria-label", mission);
+        $("#missionList").append($item.hide());
+        $item.fadeIn(320);
+        $("#missionInput").val("").focus();
+        updateMissionCount();
+      }
+      $("#addMission").on("click", addMission);
+      $("#missionInput").on("keydown", function (event) {
+        if (event.key === "Enter") addMission();
+      });
+      $("#missionList").on("change", ".mission-check", function () {
+        $(this).closest("li").toggleClass("done", this.checked);
+        updateMissionCount();
+      });
+      $("#missionList").on("click", ".remove-mission", function () {
+        $(this).closest("li").fadeOut(230, function () {
+          $(this).remove();
+          updateMissionCount();
+        });
+      });
+
+      // 4. Fade out old quote and fade in the next one.
+      const quotes = [
+        "“Every expert developer was once a beginner who kept trying.”",
+        "“One line of code today can lead to something amazing tomorrow.”",
+        "“Mistakes are not defeat. They are part of the training.”",
+        "“Keep building. Your future is created one project at a time.”",
+        "“The strongest skill is the courage to keep learning.”"
+      ];
+      let quoteIndex = 0;
+      $("#quoteButton").on("click", function () {
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+        $("#quoteText").stop(true, true).fadeOut(200, function () {
+          $(this).text(quotes[quoteIndex]).fadeIn(270);
+        });
+      });
+
+      // 5. Smoothly toggle the light/dark theme.
+      $("#themeButton").on("click", function () {
+        $("body").toggleClass("light-side");
+        const isLight = $("body").hasClass("light-side");
+        $(this).text(isLight ? "switch to dark side" : "switch to light side");
+        $("#themeText").stop(true, true).fadeOut(150, function () {
+          $(this).text(isLight
+            ? "Light mode is active. A fresh perspective can bring new ideas."
+            : "Dark mode is active. Stay focused, stay curious, and trust your progress.").fadeIn(220);
+        });
+      });
+
+      // Extra hover animation: section labels gently fade as you point at cards.
+      $(".card").hover(
+        function () { $(this).find(".card-label").stop(true, true).fadeTo(160, 0.6); },
+        function () { $(this).find(".card-label").stop(true, true).fadeTo(160, 1); }
+      );
+    });
+  </script>
+</body>
+</html>
